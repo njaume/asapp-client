@@ -2,6 +2,7 @@ import axios from "axios";
 
 class CitiesAPI {
     constructor() {
+        console.log('process.env.REACT_APP_API_URI', process.env.REACT_APP_API_URI)
         this.citiesApi = axios.create({
             baseURL: process.env.REACT_APP_API_URI,
             timeout: 15000,
@@ -9,18 +10,16 @@ class CitiesAPI {
 
     }
 
-    getCities = (payload = {}) =>
-        this.citiesApi.get(`/cities`, {
-            ...payload
+    getCities = (offset, limit, filter) =>
+        this.citiesApi.get(`cities?offset=${offset}&limit=${limit}&filter=${filter}`, {
+            offset, limit, filter
         });
 
     getCity = (id) =>
-        this.citiesApi.get(`/cities/${id}`, {
-            ...payload
-        });
+        this.citiesApi.get(`cities/${id}`);
 
     getMyCities = (payload = {}) =>
-        this.citiesApi.get(`/preferences/cities`, {
+        this.citiesApi.get(`preferences/cities`, {
             ...payload
         });
 

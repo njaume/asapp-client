@@ -6,6 +6,9 @@ import {
 } from "redux";
 import thunk from "redux-thunk";
 import citiesReducer from '../reducers/cities'
+import Api from '../../libs/Api'
+
+const CitiesApi = new Api()
 const rootReducer = combineReducers({
      cities: citiesReducer
 })
@@ -16,6 +19,7 @@ export const configureStore = () => {
         compose(
             applyMiddleware(
                 thunk.withExtraArgument({
+                    CitiesApi
                 }),
             ),
             window.__REDUX_DEVTOOLS_EXTENSION__ ?
