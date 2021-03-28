@@ -1,15 +1,15 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import useDebounce from '../libs/UseDebounce'
+import useDebounce from '../../../libs/UseDebounce'
 import { bindActionCreators } from "redux";
-import { search, setFilter, } from '../redux/actionsCreators/cities';
+import { search, setFilter, clearCities } from '../../../redux/actionsCreators/cities';
 import { withTheme } from "styled-components";
-import SquareInput from '../Components/shared/SquareInput'
+import SquareInput from '../../shared/SquareInput'
 let lastTermValue = ''
 
 const size = 20
 const SearchHook = (props) => {
-    const { isLoading, onDebouncedValChange, setFilter, search, filter, ...others } = props
+    const { isLoading, onDebouncedValChange, setFilter, search, filter, clearCities, ...others } = props
 
     const debouncedSearchTerm = useDebounce(filter, 700);
 
@@ -24,9 +24,10 @@ const SearchHook = (props) => {
         lastTermValue = debouncedSearchTerm
     }, [debouncedSearchTerm]);
 
-    const fetchAPI = (val) =>
+    const fetchAPI = (val) => {
+        clearCities()
         search(val, 0, size, true);
-
+    }
     const onChangeHandler = event => {
         event.persist();
         const val = event.target.value;
@@ -47,7 +48,8 @@ const mapDispatchToProps = dispatch =>
     bindActionCreators(
         {
             search,
-            setFilter
+            setFilter,
+            clearCities
         },
         dispatch
     );

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {
-CITIES_FETCH_SUCCCESS, CITIES_FETCH_FAIL, IS_LOADING, CITIES_SET_FILTER
+    CITIES_FETCH_SUCCCESS, CITIES_FETCH_FAIL, IS_LOADING, CITIES_SET_FILTER, CITIES_CLEAR
 } from "../../constants";
 
 
@@ -8,7 +8,7 @@ function isLoading(isLoading) {
     return {
         type: IS_LOADING,
         payload: {
-            loading: isLoading
+            isLoading: isLoading
         }
     };
 }
@@ -29,15 +29,22 @@ function fetchFail(payload) {
 
 
 
- function setFilter(value) {
+function setFilter(value) {
     return {
         type: CITIES_SET_FILTER,
         payload: {
             filter: value
         }
     };
-} 
+}
 
+function clearCities() {
+    return {
+        type: CITIES_CLEAR,
+        payload: {
+        }
+    };
+}
 
 let call;
 
@@ -54,9 +61,9 @@ const search = (text, page, size, first = true) => {
             call = axios.CancelToken.source();
 
             if (first) {
-                response = await CitiesApi.getCities(0, size, tmpText );
+                response = await CitiesApi.getCities(0, size, tmpText);
             } else {
-                response = await CitiesApi.getCities(page * size, size, tmpText );
+                response = await CitiesApi.getCities(page * size, size, tmpText);
             }
 
             dispatch(fetchSuccess({ ...response.data, size: size }));
@@ -64,7 +71,7 @@ const search = (text, page, size, first = true) => {
         } catch (errors) {
             console.log('error', errors)
             if (!axios.isCancel(errors)) {
-              //  dispatch(handleError(errors));
+                //  dispatch(handleError(errors));
             }
             dispatch(isLoading(false));
             return dispatch(
@@ -77,5 +84,6 @@ const search = (text, page, size, first = true) => {
 
 export {
     search,
-    setFilter
+    setFilter,
+    clearCities
 };

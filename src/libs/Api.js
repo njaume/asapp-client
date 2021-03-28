@@ -23,6 +23,11 @@ class CitiesAPI {
             ...payload
         });
 
+    selectCity = (payload = {}) =>
+        this.citiesApi.get(`preferences/cities`, {
+            ...payload
+        });
+
     /* HELPERS */
     parseRequestError = error => {
         let errorParsed = {
