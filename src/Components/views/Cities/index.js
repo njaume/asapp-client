@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import View from './View';
 import { bindActionCreators } from 'redux'
-import { search } from '../../../redux/actionsCreators/cities'
+import { search, getMyCities } from '../../../redux/actionsCreators/cities'
 const mapStateWithProps = (state) => {
     return {
         page: state.cities.page,
@@ -12,6 +12,7 @@ const mapStateWithProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators(
         {
+            getMyCities,
             search
         }, dispatch)
 }

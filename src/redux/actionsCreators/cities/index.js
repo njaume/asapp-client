@@ -6,9 +6,10 @@ import {
     CITIES_SET_FILTER,
     CITIES_CLEAR,
     CITIES_SELECT_ADD,
-    CITIES_SELECT_REMOVE
+    CITIES_SELECT_REMOVE,
+    CITIES_GET_MY
 } from "../../constants";
-import { SELECT_CITIES_ACTIONS } from '../../../libs/strings'
+import { toast } from 'react-toastify';
 
 function isLoading(isLoading) {
     return {
@@ -95,18 +96,16 @@ const search = (text, page, size, first = true) => {
         } catch (errors) {
             console.log('error', errors)
             if (!axios.isCancel(errors)) {
-                //  dispatch(handleError(errors));
             }
             dispatch(isLoading(false));
-            return dispatch(
-                fetchFail(CitiesApi.parseRequestError(errors))
-            );
+            const errorNorm = CitiesApi.parseRequestError(errors)
+            return handleError(errorNorm);
         }
 
     };
 };
 
-const selectCity = (geonameid, action) => {
+const selectCity = (geonameid, checked) => {
     return async (dispatch, getState, { CitiesApi }) => {
         try {
             dispatch(isLoading(true));
@@ -119,32 +118,60 @@ const selectCity = (geonameid, action) => {
                 })
             }
 
-            if (action === SELECT_CITIES_ACTIONS.ADD) {
+            if (checked) {
                 dispatch(addSelectedCity(geonameid))
-                selectedCitiesNormalized[geonameid] = true
             } else {
                 dispatch(removeSelectedCity(geonameid))
-                selectedCitiesNormalized[geonameid] = false
             }
-
+            selectedCitiesNormalized[geonameid] = checked
             await CitiesApi.selectCity(selectedCitiesNormalized);
-            //  dispatch(fetchSuccess({ ...response.data, size: size }));
+            dispatch(isLoading(false));
             return
         } catch (errors) {
             console.log('error', errors)
             dispatch(isLoading(false));
-            return dispatch(
-                fetchFail(CitiesApi.parseRequestError(errors))
+            return handleError(CitiesApi.parseRequestError(errors)
             );
         }
 
     };
 };
 
+function getMyCitiesSuccess(selectedCities) {
+    return {
+        type: CITIES_GET_MY,
+        payload: {
+            selectedCities: selectedCities
+        }
+    };
+}
+const getMyCities = () => {
+    return async (dispatch, getState, { CitiesApi }) => {
+        try {
+           // dispatch(isLoading(true));
+            const response = await CitiesApi.getMyCities();
+            console.log('response', response)
+            dispatch(getMyCitiesSuccess(response && response.data ? response.data.data : []));
+            return
+        } catch (errors) {
+            console.log('error', errors)
+            dispatch(isLoading(false));
+            return handleError(CitiesApi.parseRequestError(errors)
+            );
+        }
 
+    };
+};
+
+const handleError = (error) => {
+     const notify = () => toast(error && error.message ? error.message : "Wow something happened!", {type: 'error'});
+     notify()
+     return 
+}
 export {
     search,
     setFilter,
     clearCities,
-    selectCity
+    selectCity,
+    getMyCities
 };

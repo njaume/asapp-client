@@ -3,7 +3,8 @@ import { CITIES_FETCH_SUCCCESS,
     CITIES_SET_FILTER, 
     CITIES_CLEAR, 
     CITIES_SELECT_REMOVE, 
-    CITIES_SELECT_ADD 
+    CITIES_SELECT_ADD,
+    CITIES_GET_MY 
 } from "../../constants";
 const initialState = {
     isLoading: false,
@@ -48,7 +49,7 @@ function citiesReducer(state = initialState, action) {
             const _state = {
                 ...state
             };
-            _state.selectedCities = _state.selectedCities.filter(c => c.geonameid !== action.payload.geonameid)
+            _state.selectedCities = _state.selectedCities.filter(geonameid => geonameid !== action.payload.geonameid)
             return _state;
         }
         case CITIES_SET_FILTER: {
@@ -69,6 +70,14 @@ function citiesReducer(state = initialState, action) {
             _state.hasMore = action.payload.data && action.payload.data.length === action.payload.size
             _state.isLoading = false;
             _state.page = _state.page + 1;
+            return _state;
+        }
+
+        case CITIES_GET_MY: {
+            const _state = {
+                ...state
+            };
+            _state.selectedCities = action.payload.selectedCities ? [...action.payload.selectedCities] : []
             return _state;
         }
         default:

@@ -3,9 +3,10 @@ import SearchIcon from '../../../assets/img/SearchIcon'
 import SearchInput from "./SearchInput";
 import Results from './Results'
 export default (props) => {
-    const { search,  filter, page } = props
+    const { search,  filter, page, getMyCities } = props
     useEffect(() => {
         search(filter, page, 20)
+        getMyCities()
         return () => {
 
         }
