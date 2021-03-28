@@ -1,8 +1,14 @@
 import axios from 'axios';
 import {
-    CITIES_FETCH_SUCCCESS, CITIES_FETCH_FAIL, IS_LOADING, CITIES_SET_FILTER, CITIES_CLEAR
+    CITIES_FETCH_SUCCCESS,
+    CITIES_FETCH_FAIL,
+    IS_LOADING,
+    CITIES_SET_FILTER,
+    CITIES_CLEAR,
+    CITIES_SELECT_ADD,
+    CITIES_SELECT_REMOVE
 } from "../../constants";
-
+import { SELECT_CITIES_ACTIONS } from '../../../libs/strings'
 
 function isLoading(isLoading) {
     return {
@@ -46,6 +52,24 @@ function clearCities() {
     };
 }
 
+function addSelectedCity(geonameid) {
+    return {
+        type: CITIES_SELECT_ADD,
+        payload: {
+            geonameid: geonameid
+        }
+    };
+}
+
+function removeSelectedCity(geonameid) {
+    return {
+        type: CITIES_SELECT_REMOVE,
+        payload: {
+            geonameid: geonameid
+        }
+    };
+}
+
 let call;
 
 const search = (text, page, size, first = true) => {
@@ -82,8 +106,45 @@ const search = (text, page, size, first = true) => {
     };
 };
 
+const selectCity = (geonameid, action) => {
+    return async (dispatch, getState, { CitiesApi }) => {
+        try {
+            dispatch(isLoading(true));
+            const selectedCities = getState().cities.selectedCities
+            const selectedCitiesNormalized = {}
+
+            if (selectedCities) {
+                selectedCities.forEach(c => {
+                    selectedCitiesNormalized[c] = true
+                })
+            }
+
+            if (action === SELECT_CITIES_ACTIONS.ADD) {
+                dispatch(addSelectedCity(geonameid))
+                selectedCitiesNormalized[geonameid] = true
+            } else {
+                dispatch(removeSelectedCity(geonameid))
+                selectedCitiesNormalized[geonameid] = false
+            }
+
+            await CitiesApi.selectCity(selectedCitiesNormalized);
+            //  dispatch(fetchSuccess({ ...response.data, size: size }));
+            return
+        } catch (errors) {
+            console.log('error', errors)
+            dispatch(isLoading(false));
+            return dispatch(
+                fetchFail(CitiesApi.parseRequestError(errors))
+            );
+        }
+
+    };
+};
+
+
 export {
     search,
     setFilter,
-    clearCities
+    clearCities,
+    selectCity
 };

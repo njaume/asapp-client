@@ -24,7 +24,7 @@ class CitiesAPI {
         });
 
     selectCity = (payload = {}) =>
-        this.citiesApi.get(`preferences/cities`, {
+        this.citiesApi.patch(`preferences/cities`, {
             ...payload
         });
 
