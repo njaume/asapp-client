@@ -5,7 +5,7 @@ export default (props) => {
     const { children } = props
     return <LayoutContainer>
         <BodyContainer>
-            <Text fontSize='XL' fontWeight='bold'>
+            <Text fontSize='XL' fontWeight='bold' style={{marginBottom: '1em'}}>
                 Select your favorites cities
             </Text>
             {children}
